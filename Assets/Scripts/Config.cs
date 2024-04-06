@@ -67,7 +67,7 @@ namespace QuestAppLauncher
         public string customCategory = Category_Right;
 
         // Whether to auto-download updates
-        public bool autoUpdate = true;
+        public bool autoUpdate = false;
 
         // Background image path
         public string background = Background_Default;
