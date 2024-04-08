@@ -22,6 +22,17 @@ public class RootRunner : MonoBehaviour
         }
     }
 
+    public void RunRootCommandAfterWaiting(string command, float waitForSeconds)
+    {
+        StartCoroutine(RunRootCommandAfterWaitingCoroutine(command, waitForSeconds));
+    }
+
+    IEnumerator RunRootCommandAfterWaitingCoroutine(string command, float waitForSeconds)
+    {
+        yield return new WaitForSeconds(waitForSeconds);
+        RunRootCommand(command);
+    }
+
     void OnApplicationPause(bool pause)
     {
         // disable vrshell when resuming
