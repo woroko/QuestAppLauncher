@@ -689,7 +689,8 @@ namespace QuestAppLauncher
         /// Static method for launching an Android app
         /// </summary>
         /// <param name="packageId"></param>
-        static public void LaunchApp(string packageId)
+        /// <param name="is2DApp"></param>
+        static public void LaunchApp(string packageId, bool is2DApp)
         {
             using (AndroidJavaClass up = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
             using (AndroidJavaObject ca = up.GetStatic<AndroidJavaObject>("currentActivity"))
@@ -699,8 +700,28 @@ namespace QuestAppLauncher
 
                 try
                 {
-                    launchIntent = packageManager.Call<AndroidJavaObject>("getLaunchIntentForPackage", packageId);
-                    ca.Call("startActivity", launchIntent);
+                    if (is2DApp)
+                    {
+                        // enable vrshell temporarily to run 2D app
+                        RootRunner.instance.RunRootCommand("pm enable com.oculus.vrshell");
+                        launchIntent = packageManager.Call<AndroidJavaObject>("getLaunchIntentForPackage", packageId);
+                        // Get the package name and activity name from the component
+                        AndroidJavaObject component = launchIntent.Call<AndroidJavaObject>("getComponent");
+                        string packageName = component.Call<string>("getPackageName");
+                        string activityName = component.Call<string>("getClassName");
+
+                        // Combine the package name and activity name to get the full activity name
+                        string fullActivityName = packageName + "/" + activityName;
+
+                        // launch in oculus tv
+                        string command = "am start -a android.intent.action.VIEW -d com.oculus.tv -e uri " + fullActivityName + " com.oculus.vrshell/.MainActivity";
+                        RootRunner.instance.RunRootCommand(command);
+                    }
+                    else
+                    {
+                        launchIntent = packageManager.Call<AndroidJavaObject>("getLaunchIntentForPackage", packageId);
+                        ca.Call("startActivity", launchIntent);
+                    }
 
                     // Quest doesn't like multiple VR apps running simultaneously. Kill ourselves.
                     UnityEngine.Application.Quit();

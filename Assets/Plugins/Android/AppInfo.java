@@ -37,6 +37,9 @@ import android.graphics.Color;
 import java.util.List;
 import java.util.LinkedList;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 class AppInfoInternal {
     public ApplicationInfo app;
     public long lastTimeUsed;
@@ -155,6 +158,27 @@ public class AppInfo extends UnityPlayerActivity {
     public void grantUsageStatsPermission() {
         startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
     }
+
+    public void executeRootCommand(String command) {
+        try {
+            // Execute su command to gain root access
+            Process process = Runtime.getRuntime().exec("su");
+            DataOutputStream outputStream = new DataOutputStream(process.getOutputStream());
+
+            // Write the command to the output stream
+            outputStream.writeBytes(command + "\n");
+            outputStream.flush();
+
+            // Close the output stream
+            outputStream.close();
+
+            // Wait for the command to finish executing
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    
 
     public void processLastTimeUsed(int numDaysLookback) {
         if (!hasUsageStatsPermissions()) {

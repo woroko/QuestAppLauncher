@@ -387,6 +387,7 @@ namespace QuestAppLauncher
             appEntry.isRenameMode = isRenameMode;
             appEntry.installedApkIndex = app.Index;
             appEntry.externalIconPath = app.IconPath;
+            appEntry.is2DApp = app.AutoTabName == AppProcessor.Tab_2D;
 
             // Dynamically load icon if we're not loading the icon now
             appEntry.dynamicallyLoadIcon = !loadIcon;

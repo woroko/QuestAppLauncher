@@ -319,6 +319,28 @@ namespace QuestAppLauncher
             // Add default
             skyboxes[Config.Background_Default] = Config.Background_Default;
 
+            // Ensure that bundled backgrounds have been copied
+            // Copy jpg files
+            foreach (var filePath in Directory.GetFiles(
+                Path.Combine(UnityEngine.Application.streamingAssetsPath, SkyboxFolder), JpgExtSearch))
+            {
+                try
+                {
+                    File.Copy(filePath, Path.Combine(GetOrCreateSkymapPath(), Path.GetFileName(filePath)), false);
+                }
+                catch { }
+            }
+
+            // Copy png files
+            foreach (var filePath in Directory.GetFiles(
+                Path.Combine(UnityEngine.Application.streamingAssetsPath, SkyboxFolder), PngExtSearch))
+            {
+                try
+                {
+                    File.Copy(filePath, Path.Combine(GetOrCreateSkymapPath(), Path.GetFileName(filePath)), false);
+                } catch { }
+            }
+
             // Enumerate jpg files
             foreach (var filePath in Directory.GetFiles(
                 GetOrCreateSkymapPath(), JpgExtSearch))

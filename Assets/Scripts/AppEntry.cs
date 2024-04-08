@@ -29,6 +29,8 @@ namespace QuestAppLauncher
         public bool isRenameMode;
         public bool dynamicallyLoadIcon;
 
+        public bool is2DApp = false;
+
         const int MAX_FRAME_DELAYS = 35;
         private float lastPos = -1f;
         private bool isIconLoaded = false;

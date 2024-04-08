@@ -52,7 +52,7 @@ namespace QuestAppLauncher
                         {
                             // Launch app
                             Debug.Log("Launching: " + appEntry.appName + " (package id: " + appEntry.packageId + ")");
-                            AppProcessor.LaunchApp(appEntry.packageId);
+                            AppProcessor.LaunchApp(appEntry.packageId, appEntry.is2DApp);
                         }
                         finally
                         {
