@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class OnControllerPairingInteraction : MonoBehaviour
 {
     private float lastEntered = -1f;
     public float dwellTime = 3f;
     public TMP_Text pairingText;
+    public Image bgImage;
+    private Color originalBgImageColor = Color.black;
     private string originalPairingMessage = "";
     public string pairingHelpMessage = "Hold down the Oculus and Back buttons on the controller to pair";
 
@@ -15,16 +18,25 @@ public class OnControllerPairingInteraction : MonoBehaviour
     void Start()
     {
         originalPairingMessage = pairingText.text;
+        originalBgImageColor = bgImage.color;
     }
 
     public void OnHoverEnter(Transform t)
     {
-        lastEntered = Time.time;
+        if (t.name == "PairingText")
+        {
+            lastEntered = Time.time;
+            bgImage.color = new Color(0.6f, 0.1f, 0.22f);
+        }
     }
 
     public void OnHoverExit(Transform t)
     {
-        lastEntered = -1f;
+        if (t.name == "PairingText")
+        {
+            lastEntered = -1f;
+            bgImage.color = originalBgImageColor;
+        }
     }
 
     // Update is called once per frame

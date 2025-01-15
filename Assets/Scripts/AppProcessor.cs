@@ -703,7 +703,7 @@ namespace QuestAppLauncher
                     if (is2DApp)
                     {
                         // enable vrshell temporarily to run 2D app
-                        RootRunner.instance.RunRootCommand("pm enable com.oculus.vrshell");
+                        //RootRunner.instance.RunRootCommand("pm enable com.oculus.vrshell");
 
                         launchIntent = packageManager.Call<AndroidJavaObject>("getLaunchIntentForPackage", packageId);
                         // Get the package name and activity name from the component
@@ -713,10 +713,14 @@ namespace QuestAppLauncher
 
                         // Combine the package name and activity name to get the full activity name
                         string fullActivityName = packageName + "/" + activityName;
+                        Debug.Log("ActivityName : " + fullActivityName);
 
                         // launch in oculus tv
-                        string command = "am start -a android.intent.action.VIEW -d com.oculus.tv -e uri " + fullActivityName + " com.oculus.vrshell/.MainActivity";
-                        RootRunner.instance.RunRootCommandAfterWaiting(command, 2f);
+                        string command = "am start -a android.intent.action.VIEW -d com.oculus.vrshell.desktop -e uri \"" + fullActivityName + "\" com.oculus.vrshell/.MainActivity; sleep 2; am start -a android.intent.action.VIEW -d com.oculus.vrshell.desktop -e uri \"" + fullActivityName + "\" com.oculus.vrshell/.MainActivity;";
+
+                        RootRunner.instance.RunRootCommand(RootRunner.shellRestartPrefix + command);
+                        RootRunner.instance.RunVolumeDownListener();
+
                     }
                     else
                     {

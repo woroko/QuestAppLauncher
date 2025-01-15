@@ -13,7 +13,7 @@ namespace QuestAppLauncher
     {
         // Max pixles of skybox image for both equirectangular and cubemap images.
         // Anything larger we'll scale down. We restrict it primarily due to memory constraints.
-        const int MaxPixels = 4096 * 4096;
+        const int MaxPixels = 8192 * 8192;
 
         // Skybox selected callback
         public Action<string> OnSkyboxSelected;
@@ -318,28 +318,6 @@ namespace QuestAppLauncher
 
             // Add default
             skyboxes[Config.Background_Default] = Config.Background_Default;
-
-            // Ensure that bundled backgrounds have been copied
-            // Copy jpg files
-            foreach (var filePath in Directory.GetFiles(
-                Path.Combine(UnityEngine.Application.streamingAssetsPath, SkyboxFolder), JpgExtSearch))
-            {
-                try
-                {
-                    File.Copy(filePath, Path.Combine(GetOrCreateSkymapPath(), Path.GetFileName(filePath)), false);
-                }
-                catch { }
-            }
-
-            // Copy png files
-            foreach (var filePath in Directory.GetFiles(
-                Path.Combine(UnityEngine.Application.streamingAssetsPath, SkyboxFolder), PngExtSearch))
-            {
-                try
-                {
-                    File.Copy(filePath, Path.Combine(GetOrCreateSkymapPath(), Path.GetFileName(filePath)), false);
-                } catch { }
-            }
 
             // Enumerate jpg files
             foreach (var filePath in Directory.GetFiles(
