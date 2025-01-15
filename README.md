@@ -13,7 +13,7 @@ If you need to re-enable the stock launcher for some reason, just run ```adb she
 
 After everything is correctly installed and permissions granted, QuestAppLauncher will handle disabling and re-enabling the stock vrshell when necessary for accessing system settings and 2D applications (using vrshell.desktop). When in the stock vrshell, the volume down button will launch QuestAppLauncher again (it's just a script running in the background listening for the vol down input)
 
-To operate untethered, never shut down the device while the stock launcher is active (that is, while you are changing accessing stock system settings from the shortcut in Go App Launcher).
+To operate untethered, never shut down the device while the stock launcher is active (that is, while you are accessing the stock system settings app from the shortcut in Go App Launcher).
 
 # Original Documentation for QuestAppLauncher
 
