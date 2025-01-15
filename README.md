@@ -1,5 +1,13 @@
-# Quest App Launcher
-[Latest download](https://sidequestvr.com/#/app/199) | [Patreon](https://www.patreon.com/questapplauncher) | [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FYFMN7N3PTCJE&currency_code=USD&source=url)
+# Go App Launcher for Unlocked Firmware
+An app launcher and mobile app replacement for unlocked Oculus Go.
+
+To use this, you will need Magisk installed. Before any other commands you should run ```adb root``` (works when unlocked firmware is installed). Once you start the QuestAppLauncher for the first time, it will ask for root permissions but the popup is not working correctly. Magisk can be started correctly with ```adb shell am start -a android.intent.action.VIEW -d com.oculus.vrshell.desktop -e uri com.topjohnwu.magisk/.ui.MainActivity com.oculus.vrshell/.MainActivity```, just run a few times if it doesn't work, then grant the permission to QuestAppLauncher. 
+The necessary commands for QuestAppLauncher are ```adb shell am start -n "aaa.QuestAppLauncher.App/.AppInfo"``` and ```adb shell cmd package set-home-activity "aaa.QuestAppLauncher.App/.AppInfo"``` to set it as a home activity, replacing the stock launcher. If you need to re-enable the stock launcher for some reason, just run ```adb shell pm enable com.oculus.vrshell```
+After everything is correctly installed and permissions granted, QuestAppLauncher will handle disabling and re-enabling the stock vrshell when necessary for accessing system settings and 2D applications (using vrshell.desktop). When in the stock vrshell, the volume down button will launch QuestAppLauncher again (it's just a script running in the background listening for the vol down input)
+
+To operate untethered, never shut down the device while the stock launcher is active (that is, while you are changing accessing stock system settings from the shortcut in Go App Launcher).
+
+# Original Documentation for QuestAppLauncher
 
 An app launcher for Oculus Quest implemented in Unity.
 
