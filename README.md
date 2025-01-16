@@ -15,6 +15,8 @@ After everything is correctly installed and permissions granted, QuestAppLaunche
 
 To operate untethered, never shut down the device while the stock launcher is active (that is, while you are accessing the stock system settings app from the shortcut in Go App Launcher).
 
+If QuestAppLauncher is the hoem activity but you are stuck at a black screen, you may need to spam the home button a few times to start QuestAppLauncher.
+
 # Original Documentation for QuestAppLauncher
 
 An app launcher for Oculus Quest implemented in Unity.
