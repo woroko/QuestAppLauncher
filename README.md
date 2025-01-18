@@ -1,7 +1,9 @@
 # Go App Launcher for Unlocked Firmware
 An app launcher and mobile app replacement for unlocked Oculus Go.
 
-To use this, you will need Magisk installed. Before any other commands you should run ```adb root``` (works when unlocked firmware is installed). Once you start the QuestAppLauncher for the first time, it will ask for root permissions but the popup is not working correctly. 
+Before any other commands you should run ```adb root``` (works when unlocked firmware is installed).
+To skip the phone app requirement (NUX/New User Experience), run ```adb shell am startservice -a firsttimenux.ota.SKIP_NUX -n com.oculus.companion.server/com.oculus.firsttimenux.ota.OtaIntentService```
+Next, you will need to install Magisk (v27). Once you start the QuestAppLauncher for the first time, it will ask for root permissions but the popup is not working correctly. 
 
 Magisk can be started correctly with ```adb shell am start -a android.intent.action.VIEW -d com.oculus.vrshell.desktop -e uri com.topjohnwu.magisk/.ui.MainActivity com.oculus.vrshell/.MainActivity```, just run a few times if it doesn't work, then grant the permission to QuestAppLauncher. 
 
