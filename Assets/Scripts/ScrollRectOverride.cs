@@ -154,6 +154,7 @@ namespace QuestAppLauncher
 
         void IScrollHandler.OnScroll(PointerEventData eventData)
         {
+            base.OnScroll(eventData);
         }
 
         void OnMouseDrag()
