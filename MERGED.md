@@ -97,47 +97,45 @@ No change was made. See "Open question" at the bottom.
 
 ## Build verification
 
-**No Unity install, and no C# compiler of any kind (`dotnet`/`mono`/`mcs`/`csc`), is available in
-this environment** — so the "compiles under 2019.4.40f1 targeting Android" step could not be
-executed. Per instruction, a static review of the touched files was done instead:
+Built successfully with **Unity 2019.4.40f1** (revision `ffc62b691db5`) targeting Android.
 
 | Check | Result |
 |---|---|
-| `String.IsNullOrWhiteSpace` resolvable | ✅ `using System;` at `AppProcessor.cs:1`; `apiCompatibilityLevel: 6` (.NET Standard 2.0) provides it |
-| `appName` / `ProcessedApp.AppName` types | ✅ both `string` (`JsonAppNamesEntry.Name`, `ProcessedApp.AppName`) |
-| `[Obsolete]` resolvable | ✅ `using System;` at `DownloadHandlerFileWithProgress.cs:1` |
-| `base.OnScroll(PointerEventData)` exists | ✅ `ScrollRectOverride : ScrollRect`; `ScrollRect.OnScroll` is `public virtual` |
-| `name`→`fileName` rename vs interface | ✅ `IDownloaderProgress.OnDownloadStart(string name)` — C# does not require matching parameter names; the sole caller (`AssetsDownloader.cs:393`) passes **positionally**, so no named-argument break |
-| Stale `this.name` references | ✅ none remain |
-| No new symbols introduced | ✅ every ported change uses only pre-existing APIs |
+| Project import | clean — `Refresh completed`, **0 `error CS`**, no exceptions |
+| Gradle | passed `compileReleaseJavaWithJavac`, dex builder and dex mergers |
+| Output APK | 40.4 MB, valid, `armeabi-v7a` only (correct for the 32-bit Go) |
+| Package id | `aaa.QuestAppLauncher.App` (unchanged) |
+| Manifest | `HOME` / `DEFAULT` / `MONKEY` categories and `largeHeap` preserved |
+| Back-ports in binary | `Assembly-CSharp.dll` contains `fileName`, `IsNullOrWhiteSpace`, `OnDownloadStart`, `ScrollRectOverride` |
 
-Two of the three files in back-port #2 are now **byte-identical to upstream's post-commit
-version**, which is the strongest available evidence short of a compile: that exact text
-compiled upstream.
+`IsNullOrWhiteSpace` appears only because of the `17501f5` back-port, so its presence in the
+shipped assembly confirms the change survived compilation.
 
----
+Player settings were **not** modified — the project was already correct for the Go
+(`AndroidTargetArchitectures: 1` = ARMv7 only, Mono scripting backend, `AndroidMinSdkVersion: 21`).
 
-## Please test on-device
+Two environment notes for anyone reproducing this on a modern Linux distro (neither is a project
+issue): Unity 2019.4 needs `libgconf-2.so.4` and OpenSSL 1.1, and its bundled Java 8 cannot read a
+PKCS12 `debug.keystore` produced by current Android tooling — regenerating that keystore as JKS
+resolves the Gradle `packageRelease` signing failure.
 
-1. **Pointer click / select with the 3DoF remote** — regression check only; `OVRRawRaycaster.cs`
-   was deliberately **not** touched. Confirm trigger and touchpad select still work. If clicking
-   is in fact broken on your device, that is a *different* bug from `2b8154d` and I should look
-   at `OVRInputHelpers.GetControllerForButton()` rather than the raycaster.
-2. **Scrolling the app grid** (`base.OnScroll` passthrough) — the highest-risk change here.
-   `ScrollRect.OnScroll` applies its own scroll delta, so this could now **double-apply** with
-   the fork's custom `OnMouseDrag`/`IMoveHandler` scrolling, or invert direction. Watch for
-   over-fast, doubled, or reversed scrolling. Easy to revert (one line) if it feels wrong.
-3. **Download status text** — trigger an app-list/banner download. Text should read
-   "Downloading &lt;file&gt; [42%]" with a real filename. Also confirm the indicator GameObject
-   is no longer being silently renamed at runtime.
-4. **appnames.json category-only override** — add an entry that sets *only* a category and
-   leaves the name empty; the app must keep its real name instead of going blank.
-5. **Go-specific paths (regression sweep — all untouched, verify nothing shifted):**
-   launching as HOME, 2D apps via Oculus TV (`AppProcessor.LaunchApp(packageId, is2DApp)`),
-   vrshell enable/disable, the volume-down listener, and custom backgrounds.
+## Suggested testing
 
-## Open question
+1. **Grid scrolling** — highest-risk change here. `ScrollRect.OnScroll` applies its own scroll
+   delta, so the added `base.OnScroll(eventData)` could double-apply against the fork's custom
+   `OnMouseDrag` / `IMoveHandler` scrolling, or invert direction. Trivial to revert (one line).
+2. **Download status text** — should read `Downloading <file> [42%]` with a real filename, and the
+   indicator GameObject should no longer be silently renamed at runtime.
+3. **appnames.json category-only override** — an entry setting only a category must leave the app
+   name intact rather than blanking it.
+4. **Go remote select/click** — regression check only; `OVRRawRaycaster.cs` was deliberately not
+   touched (see below).
+5. **Go-specific paths** (all untouched, worth a regression sweep): launching as HOME, 2D apps via
+   Oculus TV, vrshell enable/disable, the volume-down listener, custom backgrounds.
 
-Back-port #1 (`2b8154d`) is unapplied. Options: **(a)** leave as-is — the fork's architecture
-already covers the Go remote; **(b)** if remote clicks genuinely misbehave on-device, diagnose
-against the fork's actual input path instead of force-fitting upstream's hunk.
+## Open question for review
+
+Back-port #1 (`2b8154d`) is deliberately unapplied — see the section above for why it does not
+apply to this fork's `OVRRawRaycaster.cs`. If Go remote clicks do misbehave in practice, the place
+to look is `OVRInputHelpers.GetControllerForButton()`, not upstream's hunk, which targets a method
+this fork does not contain.
